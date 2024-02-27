@@ -1,27 +1,38 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-# Step 1: Install Nginx
+# Update package lists and install Nginx
 sudo apt-get update
 sudo apt-get install -y nginx
 
-# Step 2: Create a configuration file for redirection
-echo "server {
+# Create a simple HTML file for the destination page (example: destination.html)
+echo "<html><body><h1>This is the destination page</h1></body></html>" | sudo tee /var/www/html/destination.html
+
+# Create a Nginx configuration file for the redirection
+sudo tee /etc/nginx/sites-available/redirect_me <<EOF
+server {
     listen 80;
-    server_name localhost;
+    server_name _;
 
     location /redirect_me {
-        return 301 https://www.example.com/new_page;
+        return 301 /destination.html;
     }
 
-    # Your other server configurations go here...
+    location /destination.html {
+        root /var/www/html;
+        index destination.html;
+    }
 
-}" | sudo tee /etc/nginx/sites-available/3-redirection
+    # Additional server configuration if needed
+    # ...
 
-# Step 3: Create a symbolic link to enable the site
-sudo ln -s /etc/nginx/sites-available/3-redirection /etc/nginx/sites-enabled/
+}
+EOF
 
-# Step 4: Test Nginx configuration
-sudo nginx -t
+# Create a symbolic link to enable the new site
+sudo ln -s /etc/nginx/sites-available/redirect_me /etc/nginx/sites-enabled/
 
-# Step 5: Restart Nginx to apply changes
-sudo service nginx restart
+# Remove the default Nginx default configuration
+sudo rm /etc/nginx/sites-enabled/default
+
+# Restart Nginx to apply changes
+sudo systemctl restart nginx
