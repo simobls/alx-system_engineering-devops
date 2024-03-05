@@ -25,6 +25,5 @@ else
     echo "Error: Nginx configuration file not found at $nginx_conf."
 fi
 
-
 # restart the web server after updating the settings
 sudo service nginx restart
