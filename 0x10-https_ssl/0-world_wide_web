@@ -20,7 +20,7 @@ dig_cmd () {
 	# func variables
 	sub="$2"
 	INFO="$(dig "$sub.$domain" | grep -A1 'ANSWER SECTION:' | awk 'NR==2')"
-	IP=$(dig +short "$sub.$domain")
+	IP=$(echo "$INFO" | awk '{print $5}')
 	RECORD=$(echo "$INFO" | awk '{print $4}')
 
 	echo -e "${brown}The subdomain ${blue}$sub${brown} is a ${blue}$RECORD${brown} record and points to ${blue}$IP${reset}"
