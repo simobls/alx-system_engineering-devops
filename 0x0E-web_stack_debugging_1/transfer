@@ -1,0 +1,15 @@
+servers=(
+    "ubuntu@100.26.136.157"
+    "ubuntu@3.85.54.238"
+    "ubuntu@100.25.198.104"
+)
+
+for server in "${servers[@]}"; do
+    echo "Transferring file to $server..."
+    scp -i "$1" -o StrictHostKeyChecking=no "$2" "$server:~"
+    if [ $? -eq 0 ]; then
+        echo "File transferred successfully to $server"
+    else
+        echo "Error transferring file to $server"
+    fi
+done
